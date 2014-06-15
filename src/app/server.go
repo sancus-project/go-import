@@ -5,6 +5,7 @@ import (
 	"go.sancus.io/core/log"
 	"go.sancus.io/web"
 	"net/http"
+	"regexp"
 )
 
 // handler
@@ -13,15 +14,29 @@ type handler struct {
 	logger   *log.Logger
 }
 
+var path_split = regexp.MustCompile("^/(([^/]+)(/.*)?)?$")
+
 func (h *handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	h.logger.Info("path: %s", r.URL.Path)
-	http.NotFound(w, r)
+	p := path_split.FindAllStringSubmatch(r.URL.Path, -1)[0][2]
+	v := h.projects[p]
+
+	if v == "" {
+		h.logger.Warn("path: %s (not recorgnized)", r.URL.Path)
+		http.NotFound(w, r)
+		return
+	}
+
+	h.logger.Info("path: %s (%s)", r.URL.Path, p)
+
+	fmt.Fprintf(w, "<!DOCTYPE html>\n<head>\n")
+	fmt.Fprintf(w, "\t<meta name=\"go-import\" content=\"%s\">\n", v)
+	fmt.Fprintf(w, "</head>\n<body />\n")
 }
 
 func NewProjectHandler(projects map[string]*GoImport, l *log.Logger) http.Handler {
 	h := handler{
 		projects: make(map[string]string),
-		logger:   l.SubLogger("dispatcher"),
+		logger:   l.SubLogger(":dispatcher"),
 	}
 
 	for k, v := range projects {

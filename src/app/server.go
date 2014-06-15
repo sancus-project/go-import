@@ -40,11 +40,11 @@ func NewProjectHandler(projects map[string]*GoImport, l *log.Logger) http.Handle
 }
 
 func NewServerFromFile(fn string, l *log.Logger) (*web.Server, error) {
+	var err error
 	if ini, err := ConfigFromFile(fn); err == nil {
 		h := NewProjectHandler(ini.Project, l)
 		s := web.NewServer(ini.HTTP.Address, h)
 		return s, nil
-	} else {
-		return nil, err
 	}
+	return nil, err
 }

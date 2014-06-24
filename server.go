@@ -40,7 +40,7 @@ func NewHandler(packages map[string]*Package, l *log.Logger) http.Handler {
 	}
 
 	for k, v := range packages {
-		if v.Repo == "" {
+		if v.URL == "" {
 			continue
 		}
 		if v.VCS == "" {
@@ -48,7 +48,7 @@ func NewHandler(packages map[string]*Package, l *log.Logger) http.Handler {
 		}
 
 		s := "go.sancus.io/%s %s %s"
-		h.packages[k] = fmt.Sprintf(s, k, v.VCS, v.Repo)
+		h.packages[k] = fmt.Sprintf(s, k, v.VCS, v.URL)
 	}
 
 	return &h

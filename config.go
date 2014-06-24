@@ -7,7 +7,7 @@ import (
 // config.ini
 type Package struct {
 	VCS  string
-	Repo string
+	URL string
 }
 
 type Config struct {

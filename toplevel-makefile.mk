@@ -27,7 +27,7 @@ fmt:
 	find $(WS) -name 'gofmt.sh' -exec $(SHELL) '{}' \;
 
 $(DIRS):
-	mkdir $@
+	mkdir -p $@
 
 clean:
 	rm -vrf $(DIRS)

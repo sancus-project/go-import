@@ -55,11 +55,11 @@ func NewHandler(packages map[string]*Package, l *log.Logger) http.Handler {
 }
 
 func NewServerFromFile(fn string, l *log.Logger) (*web.Server, error) {
-	var err error
 	if ini, err := ConfigFromFile(fn); err == nil {
 		h := NewHandler(ini.Package, l)
 		s := web.NewServer(ini.HTTP.Address, h)
 		return s, nil
+	} else {
+		return nil, err
 	}
-	return nil, err
 }

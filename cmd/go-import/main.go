@@ -10,8 +10,8 @@ func main() {
 	var l = log.GetLogger("go-import")
 
 	s, err := app.NewServerFromFile(fn, l)
-	if err != nil {
-		l.Fatal("NewServerFromFile(%q): %s", fn, err)
+	if s == nil {
+		l.Fatal("NewServerFromFile(%q): %v", fn, err)
 	}
 
 	l.Info("Listening %s", s.Addr)

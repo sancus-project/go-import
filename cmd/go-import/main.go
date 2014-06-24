@@ -1,12 +1,12 @@
 package main
 
 import (
-	"app"
+	"go.sancus.io/go-import"
 )
 
 func main() {
 	var fn = "config.ini"
-	var l = app.Loggers.Get("go.sancus.io")
+	var l = app.Loggers.Get("go-import")
 
 	s, err := app.NewServerFromFile(fn, l)
 	if err != nil {

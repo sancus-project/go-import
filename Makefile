@@ -1,14 +1,9 @@
-.PHONY: run all
+.PHONY: run all clean get fmt prepare
 
 WS := $(CURDIR)
 GO := go
-T  := $(WS)/runner.go
 
-DEPS := code.google.com/p/gcfg \
-	go.sancus.io/core \
-	go.sancus.io/web
-
-SDEPS := $(patsubst %,src/%/.git, $(DEPS))
+PKG := go.sancus.io/go-import/cmd/go-import
 
 GOPATH := $(WS)$(shell echo "$${GOPATH:+:$$GOPATH}")
 GOBIN  := $(WS)/bin
@@ -16,17 +11,23 @@ TMPDIR := $(WS)/tmp
 
 export GOPATH GOBIN TMPDIR
 
-run: prepare
-	$(GO) run $(T)
+PKGDIR := $(WS)/pkg
+DIRS   := $(PKGDIR) $(TMPDIR) $(GOBIN)
 
-all: $(SDEPS)
-	$(GO) install -x $(T)
+all: $(DIRS)
+	$(GO) install -v $(PKG)
 
-prepare: $(TMPDIR) $(DEPS)
+get: $(DIRS)
+	$(GO) get -u $(PKG)
 
-$(SDEPS): D=$(patsubst src/%/.git,%,$@)
-$(SDEPS):
-	$(GO) get $(D)
+run: all
+	$(GOBIN)/go-import
 
-$(TMPDIR):
-	mkdir -p $(TMPDIR)
+fmt:
+	find $(WS) -name 'gofmt.sh' -exec $(SHELL) '{}' \;
+
+$(DIRS):
+	mkdir $@
+
+clean:
+	rm -vrf $(DIRS)

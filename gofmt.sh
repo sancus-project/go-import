@@ -1,4 +1,3 @@
 #!/bin/sh
 
-cd "$(dirname "$0")"
-exec gofmt -l -w -e -s -tabs *.go $(find src/app -type f -name '*.go')
+find "$(dirname "$0")" -type f -name '*.go' | xargs -r gofmt -l -w -e -s

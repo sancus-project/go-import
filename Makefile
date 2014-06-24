@@ -2,12 +2,13 @@
 
 WS := $(CURDIR)
 GO := go
+T  := $(WS)/runner.go
 
-T := $(WS)/runner.go
-
-DEPS := $(patsubst %,src/%/.git, code.google.com/p/gcfg \
+DEPS := code.google.com/p/gcfg \
 	go.sancus.io/core \
-	go.sancus.io/web)
+	go.sancus.io/web
+
+SDEPS := $(patsubst %,src/%/.git, $(DEPS))
 
 GOPATH := $(WS)$(shell echo "$${GOPATH:+:$$GOPATH}")
 GOBIN  := $(WS)/bin
@@ -18,13 +19,13 @@ export GOPATH GOBIN TMPDIR
 run: prepare
 	$(GO) run $(T)
 
-all:
+all: $(SDEPS)
 	$(GO) install -x $(T)
 
 prepare: $(TMPDIR) $(DEPS)
 
-$(DEPS): D=$(patsubst src/%/.git,%,$@)
-$(DEPS):
+$(SDEPS): D=$(patsubst src/%/.git,%,$@)
+$(SDEPS):
 	$(GO) get $(D)
 
 $(TMPDIR):

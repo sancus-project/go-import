@@ -10,7 +10,7 @@ import (
 
 // handler
 type handler struct {
-	projects map[string]string
+	packages map[string]string
 	logger   *log.Logger
 }
 
@@ -18,7 +18,7 @@ var path_split = regexp.MustCompile("^/(([^/]+)(/.*)?)?$")
 
 func (h *handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	p := path_split.FindAllStringSubmatch(r.URL.Path, -1)[0][2]
-	v := h.projects[p]
+	v := h.packages[p]
 
 	if v == "" {
 		h.logger.Warn("path: %s (not recorgnized)", r.URL.Path)
@@ -33,13 +33,13 @@ func (h *handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "</head>\n<body />\n")
 }
 
-func NewProjectHandler(projects map[string]*GoImport, l *log.Logger) http.Handler {
+func NewHandler(packages map[string]*Package, l *log.Logger) http.Handler {
 	h := handler{
-		projects: make(map[string]string),
+		packages: make(map[string]string),
 		logger:   l.SubLogger(":dispatcher"),
 	}
 
-	for k, v := range projects {
+	for k, v := range packages {
 		if v.Repo == "" {
 			continue
 		}
@@ -48,7 +48,7 @@ func NewProjectHandler(projects map[string]*GoImport, l *log.Logger) http.Handle
 		}
 
 		s := "go.sancus.io/%s %s %s"
-		h.projects[k] = fmt.Sprintf(s, k, v.VCS, v.Repo)
+		h.packages[k] = fmt.Sprintf(s, k, v.VCS, v.Repo)
 	}
 
 	return &h
@@ -57,7 +57,7 @@ func NewProjectHandler(projects map[string]*GoImport, l *log.Logger) http.Handle
 func NewServerFromFile(fn string, l *log.Logger) (*web.Server, error) {
 	var err error
 	if ini, err := ConfigFromFile(fn); err == nil {
-		h := NewProjectHandler(ini.Project, l)
+		h := NewHandler(ini.Package, l)
 		s := web.NewServer(ini.HTTP.Address, h)
 		return s, nil
 	}

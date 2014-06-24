@@ -5,7 +5,7 @@ import (
 )
 
 // config.ini
-type GoImport struct {
+type Package struct {
 	VCS  string
 	Repo string
 }
@@ -14,7 +14,7 @@ type Config struct {
 	HTTP struct {
 		Address string
 	}
-	Project map[string]*GoImport
+	Package map[string]*Package
 }
 
 func ConfigFromFile(fn string) (*Config, error) {

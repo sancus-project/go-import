@@ -5,7 +5,7 @@ import (
 	"go.sancus.io/core/log"
 	"go.sancus.io/web"
 	"net/http"
-	"regexp"
+	"strings"
 )
 
 // handler
@@ -14,23 +14,28 @@ type handler struct {
 	logger   *log.Logger
 }
 
-var path_split = regexp.MustCompile("^/(([^/]+)(/.*)?)?$")
-
 func (h *handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	p := path_split.FindAllStringSubmatch(r.URL.Path, -1)[0][2]
-	v := h.packages[p]
+	url := r.Host + r.URL.Path
 
-	if v == "" {
-		h.logger.Warn("path: %s (not recorgnized)", r.URL.Path)
-		http.NotFound(w, r)
-		return
+	for k, v := range h.packages {
+		s := strings.TrimPrefix(url, k)
+		if s == "" || s[0] == '/' {
+			if s == "" {
+				h.logger.Info("%s -> %s", k, v)
+			} else {
+				h.logger.Info("%s (%s) -> %s", k, s, v)
+			}
+
+			fmt.Fprintf(w, "<!DOCTYPE html>\n<head>\n")
+			fmt.Fprintf(w, "\t<meta name=\"go-import\" content=\"%s\">\n", v)
+			fmt.Fprintf(w, "</head>\n<body />\n")
+			return
+		}
 	}
 
-	h.logger.Info("path: %s (%s)", r.URL.Path, p)
-
-	fmt.Fprintf(w, "<!DOCTYPE html>\n<head>\n")
-	fmt.Fprintf(w, "\t<meta name=\"go-import\" content=\"%s\">\n", v)
-	fmt.Fprintf(w, "</head>\n<body />\n")
+	h.logger.Warn("%v: not recorgnized", url)
+	http.NotFound(w, r)
+	return
 }
 
 func NewHandler(packages map[string]*Package, l *log.Logger) http.Handler {
@@ -47,7 +52,7 @@ func NewHandler(packages map[string]*Package, l *log.Logger) http.Handler {
 			v.VCS = "git"
 		}
 
-		s := "go.sancus.io/%s %s %s"
+		s := "%s %s %s"
 		h.packages[k] = fmt.Sprintf(s, k, v.VCS, v.URL)
 	}
 

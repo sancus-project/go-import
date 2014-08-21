@@ -33,6 +33,7 @@ func (h *handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			fmt.Fprintf(w, "\t<meta http-equiv=\"refresh\" content=\"5; url=%v\" />\n", s)
 
 			fmt.Fprintf(w, "</head>\n<body>\n")
+			fmt.Fprintf(w, "<pre>git clone <a href=\"%v\">%v</a>\n</pre>", v.URL, v.URL)
 			fmt.Fprintf(w, "<pre>go get <a href=\"%v\">%v</a></pre>\n", s, url)
 			fmt.Fprintf(w, "<pre>import \"<a href=\"%v\">%v</a>\"</pre>\n", s, url)
 			fmt.Fprintf(w, "</body>\n")
@@ -40,7 +41,7 @@ func (h *handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	h.logger.Warn("%v: not recorgnized", url)
+	h.logger.Warn("%v: not recognised", url)
 	http.NotFound(w, r)
 	return
 }

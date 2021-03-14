@@ -4,5 +4,5 @@ go-import
 vanity url handler for sancus modules for golang
 
 ----
-GOPATH=$PWD go get go.sancus.io/go-import
+GOPATH=$PWD go get go.sancus.dev/go-import
 ----

@@ -3,7 +3,7 @@
 WS := $(CURDIR)
 GO := go
 
-PKG := go.sancus.io/go-import/cmd/go-import
+PKG := go.sancus.dev/go-import/cmd/go-import
 
 GOPATH := $(WS)$(shell echo "$${GOPATH:+:$$GOPATH}")
 GOBIN  := $(WS)/bin

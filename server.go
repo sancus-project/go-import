@@ -2,8 +2,8 @@ package app
 
 import (
 	"fmt"
-	"go.sancus.io/core/log"
-	"go.sancus.io/web"
+	"go.sancus.dev/sancus/attic/log"
+	"go.sancus.dev/sancus/web"
 	"net/http"
 	"strings"
 )

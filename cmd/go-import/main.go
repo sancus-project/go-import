@@ -1,8 +1,8 @@
 package main
 
 import (
-	"go.sancus.io/core/log"
-	"go.sancus.io/go-import"
+	"go.sancus.dev/go-import"
+	"go.sancus.dev/sancus/attic/log"
 )
 
 func main() {
